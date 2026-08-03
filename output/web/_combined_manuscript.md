@@ -32,6 +32,10 @@ This exemplar is limited to lawful redaction, declassification support, public-r
 
 The pipeline architecture consists of two layers. Layer one performs text-level disclosure control: each segment is audited against a public classification ceiling, redaction spans are validated for non-overlap, orphan decisions are flagged, and source-control coverage is enforced. Layer two applies visual redaction treatments, steganographic provenance overlays, and optional Kmyth TPM sidecar sealing.
 
+![Release-review pipeline: the disclosure-control layer audits the invented fixture against the public ceiling and builds an in-memory sanitized packet, the evidence layer projects text-free audit and hashed-ledger JSON, and the visual layer renders the 4x4 proof matrix with optional steganography and Kmyth TPM sidecars.](../figures/redaction_flow.png){#fig:redaction_flow}
+
+[@fig:redaction_flow] traces the full pipeline: typed fixture load, ceiling and span validation, source-control coverage and mosaic checks, the in-memory sanitized packet, the two text-free public projections, and the visual proof chain.
+
 ## Layer One: Disclosure Control
 
 The disclosure-control engine operates on `RedactionSegment` objects, each carrying an identifier, classification level, text content, and optional source controls. Redaction decisions are `RedactionDecision` records with bounded reasons: `source_identity`, `operational_detail`, `time_place_selector`, `legal_privilege`, and `privacy`. The audit engine validates that:
@@ -82,7 +86,7 @@ The kmyth-seal binary was patched to call `Tss2_Sys_FlushContext` for the storag
 
 ## Fixture Release Packet
 
-The fixture release packet contains fourteen segments spanning four classification levels: UNCLASSIFIED (ten segments), CUI (one segment), SECRET (two segments), and TOP_SECRET (one segment). Four segments carry source controls (drawn from the HUMINT, SIGINT, and IMINT disciplines). Twenty-one redaction decisions are applied across those four segments, using all five bounded reasons: `source_identity`, `operational_detail`, `time_place_selector`, `legal_privilege`, and `privacy`.
+The fixture release packet contains fourteen segments spanning four classification levels: UNCLASSIFIED (ten segments), CUI (one segment), SECRET (two segments), and TOP_SECRET (one segment). Four segments carry source controls (drawn from the HUMINT, SIGINT, and IMINT disciplines). Twenty-two redaction decisions are applied across those four segments, using all five bounded reasons: `source_identity`, `operational_detail`, `time_place_selector`, `legal_privilege`, and `privacy`.
 
 The audit produces:
 
@@ -91,6 +95,23 @@ The audit produces:
 - **Redaction coverage**: 1.0 (all sensitive segments have at least one decision).
 - **Mosaic risk score**: residual markers normalized by segment and pattern count.
 - **Findings**: warning-level findings for residual markers in sanitized text.
+
+The canonical run's measured values are bound to `output/reports/redaction_audit.json` by the manuscript-binding tests:
+
+| Metric | Measured value |
+|---|---|
+| Segment count | 14 |
+| Redaction decision count | 22 |
+| Reviewer record count | 3 |
+| Release safety score | 0.798 |
+| Redaction coverage | 1.0 |
+| Mosaic risk score | 0.012 |
+| Findings | 2 warning-level |
+| Releasable | true |
+| Final release recommended | false |
+| Approvals | 3 |
+
+Because the intelligence policy blocks on warnings and the fixture retains two warning-level residual markers, `final_release_recommended` is false even though the packet is releasable and the review gate is approved.
 
 ## Source-Safe Redaction Ledger
 
@@ -140,6 +161,10 @@ The development proof matrix produces sixteen base PDFs (four redaction styles Ã
 - Hash manifest filename and SHA-256.
 - Kmyth sidecar count and filenames (when Kmyth is available).
 
+![Development proof matrix: four redaction styles (blackout, whiteout, grayout, blur) rendered across four PDF backgrounds (white, gray, black, blur); every one of the sixteen cells applies the identical source-safe redaction decisions.](../figures/disclosure_control_matrix.png){#fig:disclosure_control_matrix}
+
+[@fig:disclosure_control_matrix] renders the sixteen style-background combinations; only the visual token and the page background differ between cells.
+
 ## Kmyth TPM Sidecar Production
 
 When Kmyth tools are runnable and a TPM backend is available, each variant produces two `.ski` sidecars:
@@ -163,7 +188,8 @@ The residual-risk detector scans sanitized text for common public-release leaks:
 | Controlled dissemination | `\b(?:NOFORN\|ORCON\|REL\s+TO)\b` |
 | Collection discipline | `\b(?:HUMINT\|SIGINT\|IMINT\|MASINT\|OSINT)\b` |
 | Compartment marker | `\b(?:SCI\|TS_SCI\|TOP\s+SECRET)\b` |
-| Sensitive markers | `HUMINT`, `SIGINT`, `source`, `selector`, `location`, `2026-` |
+| ISO calendar date | `\b20\d{2}-\d{2}-\d{2}\b` |
+| Sensitive markers | `HUMINT`, `SIGINT`, `source`, `selector`, `location` |
 
 Each detected marker generates a warning finding. The mosaic risk score aggregates residual markers across all segments.
 

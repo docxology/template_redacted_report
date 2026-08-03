@@ -174,6 +174,111 @@ def intelligence_release_policy() -> RedactionPolicy:
     )
 
 
+def law_enforcement_release_policy() -> RedactionPolicy:
+    """Return a release-review policy for invented law-enforcement fixtures.
+
+    Uses a smaller classification ladder (``LAW_ENFORCEMENT_SENSITIVE`` sits
+    above UNCLASSIFIED, ``SECRET`` at the top) with an investigator, a legal
+    reviewer, and the release authority required for approval.
+    """
+    taxonomy = ClassificationTaxonomy(
+        name="law_enforcement",
+        order={
+            "UNCLASSIFIED": 0,
+            "LAW_ENFORCEMENT_SENSITIVE": 1,
+            "CONFIDENTIAL": 2,
+            "SECRET": 3,
+        },
+    )
+    return RedactionPolicy(
+        name="law_enforcement_release_review",
+        taxonomy=taxonomy,
+        public_ceiling="UNCLASSIFIED",
+        residual_patterns=DEFAULT_RESIDUAL_PATTERNS
+        + (
+            ResidualPattern("person_identifying_data", r"\b(?:SSN|DOB|BADGE|CASE_NUMBER)\b", "warning"),
+            ResidualPattern("investigation_marker", r"\b(?:SUBJECT|WITNESS|INFORMANT)\b", "warning"),
+        ),
+        required_review_roles=("investigator", "legal_reviewer", "release_authority"),
+        minimum_approvals=2,
+        mosaic_threshold=0.40,
+        block_warnings=True,
+    )
+
+
+def public_records_release_policy() -> RedactionPolicy:
+    """Return a release-review policy for invented public-records fixtures.
+
+    The public-records ladder starts at ``PUBLIC`` and adds
+    ``PERSONAL_INFORMATION``, ``PRIVILEGED``, and ``NONPUBLIC`` tiers above it;
+    personal-identifier markers are treated as residual risk.
+    """
+    taxonomy = ClassificationTaxonomy(
+        name="public_records",
+        order={
+            "PUBLIC": 0,
+            "PERSONAL_INFORMATION": 1,
+            "PRIVILEGED": 2,
+            "NONPUBLIC": 3,
+        },
+    )
+    return RedactionPolicy(
+        name="public_records_release_review",
+        taxonomy=taxonomy,
+        public_ceiling="PUBLIC",
+        residual_patterns=DEFAULT_RESIDUAL_PATTERNS
+        + (ResidualPattern("personal_identifier", r"\b(?:SSN|DOB|PHONE|EMAIL)\b", "warning"),),
+        required_review_roles=("records_manager", "legal_reviewer", "release_authority"),
+        minimum_approvals=2,
+        mosaic_threshold=0.40,
+        block_warnings=False,
+    )
+
+
+def health_privacy_release_policy() -> RedactionPolicy:
+    """Return a release-review policy for invented health-privacy fixtures.
+
+    ``PHI`` and ``PROTECTED_HEALTH`` tiers sit above ``PUBLIC``; privacy and
+    clinical reviewers approve alongside the release authority.
+    """
+    taxonomy = ClassificationTaxonomy(
+        name="health_privacy",
+        order={
+            "PUBLIC": 0,
+            "PHI": 1,
+            "PROTECTED_HEALTH": 2,
+            "RESTRICTED": 3,
+        },
+    )
+    return RedactionPolicy(
+        name="health_privacy_release_review",
+        taxonomy=taxonomy,
+        public_ceiling="PUBLIC",
+        residual_patterns=DEFAULT_RESIDUAL_PATTERNS
+        + (ResidualPattern("phi_marker", r"\b(?:PHI|HIPAA|MEDICAL_RECORD)\b", "warning"),),
+        required_review_roles=("privacy_officer", "clinical_reviewer", "release_authority"),
+        minimum_approvals=2,
+        mosaic_threshold=0.35,
+        block_warnings=True,
+    )
+
+
+def declared_release_policies() -> tuple[RedactionPolicy, ...]:
+    """Return the canonical invented release-review policy set.
+
+    Every policy is an organization-specific adapter over the same audit
+    engine; the canonical exemplar pipeline runs
+    ``intelligence_release_review``, and forks may select any other declared
+    policy for their own invented fixtures.
+    """
+    return (
+        intelligence_release_policy(),
+        law_enforcement_release_policy(),
+        public_records_release_policy(),
+        health_privacy_release_policy(),
+    )
+
+
 def redact_text(text: str, decisions: list[RedactionDecision]) -> str:
     """Apply non-overlapping redaction decisions to text."""
     _validate_decision_bounds(text, decisions)
@@ -208,7 +313,7 @@ def audit_release_packet(
         _check_classification_ceiling(segment, rank, ceiling_rank, segment_decisions, findings)
         _check_decisions(segment, segment_decisions, findings)
         _check_sensitive_residue(segment, segment_decisions, findings, policy)
-    coverage = _redaction_coverage(segments, decision_map)
+    coverage = _redaction_coverage(segments, decision_map, policy)
     mosaic = _mosaic_risk(segments, decision_map, policy)
     if mosaic > mosaic_threshold:
         findings.append(RedactionFinding("warning", "mosaic_risk", "combined residual selectors exceed threshold"))
@@ -584,9 +689,17 @@ def _check_sensitive_residue(
         )
 
 
-def _redaction_coverage(segments: list[RedactionSegment], decision_map: dict[str, list[RedactionDecision]]) -> float:
+def _redaction_coverage(
+    segments: list[RedactionSegment],
+    decision_map: dict[str, list[RedactionDecision]],
+    policy: RedactionPolicy,
+) -> float:
+    ceiling_rank = policy.taxonomy.order.get(policy.public_ceiling, 0)
     sensitive_segments = [
-        segment for segment in segments if segment.classification.upper() != "UNCLASSIFIED" or segment.source_controls
+        segment
+        for segment in segments
+        if policy.taxonomy.order.get(_normalize_classification(segment.classification), 99) > ceiling_rank
+        or segment.source_controls
     ]
     if not sensitive_segments:
         return 1.0
