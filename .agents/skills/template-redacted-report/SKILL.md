@@ -9,7 +9,8 @@ tags: [exemplar, redaction, disclosure-control, release-review]
 
 # template-redacted-report
 
-Load this skill when working inside `projects/templates/template_redacted_report/`.
+Load this skill when working inside the `template_redacted_report` repository
+(standalone clone of the `template_redacted_report` exemplar).
 
 ## When to Use
 
@@ -20,10 +21,13 @@ Load this skill when working inside `projects/templates/template_redacted_report
 ## Quick Reference
 
 ```bash
-uv run pytest projects/templates/template_redacted_report/tests --cov=projects/templates/template_redacted_report/src --cov-fail-under=90
-uv run python scripts/pipeline/stage_01_test.py --project templates/template_redacted_report --project-only
-uv run python scripts/pipeline/stage_02_analysis.py --project templates/template_redacted_report
+uv run pytest tests --cov=src --cov-fail-under=90
+uv run python scripts/01_generate_release_artifacts.py
+uv run python scripts/02_build_figures.py
 ```
+
+Run from the repository root. Renderer and monorepo Stage 03/04 stages live in
+[docxology/template](https://github.com/docxology/template).
 
 ## Pitfalls
 

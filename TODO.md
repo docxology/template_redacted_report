@@ -1,7 +1,8 @@
 # template_redacted_report TODO
 
 This backlog is future-only. Completed validation and dated review evidence are preserved in
-[`docs/maintenance/exemplar-backlog-history.md`](../../../docs/maintenance/exemplar-backlog-history.md)
+the [docxology/template](https://github.com/docxology/template) monorepo's
+`docs/maintenance/exemplar-backlog-history.md` (not shipped in this standalone repository)
 or in source-owned generated receipts. Each active row must retain a stable ID, size, dependency,
 next action, proving artifact, acceptance command, and negative control; absence of an owner or external receipt
 keeps a capability blocked rather than silently promoting it.
@@ -44,7 +45,7 @@ No active rows are currently scoped at this size.
 
 | ID | Status | Size | Dependency | Next action / unblock condition | Proving artifact | Acceptance command | Negative control |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `REDACTED-VISUAL-1` | blocked-tool | Medium | Stable raster toolchain | Install or pin the required tool, or record its unavailable status; run the explicit visual gate only when tooling is pinned and attach a pixel regression manifest. | pixel regression manifest | `uv run pytest projects/templates/template_redacted_report/tests -q --no-cov --timeout=120` | missing raster tool must report unavailable, not pass |
+| `REDACTED-VISUAL-1` | blocked-tool | Medium | Stable raster toolchain | Install or pin the required tool, or record its unavailable status; run the explicit visual gate only when tooling is pinned and attach a pixel regression manifest. | pixel regression manifest | `uv run pytest tests -q --no-cov` | missing raster tool must report unavailable, not pass |
 
 ## Major upcoming
 

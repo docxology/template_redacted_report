@@ -7,11 +7,14 @@ Configuration lives in `manuscript/config.yaml`; invented public redaction fixtu
 ## Commands
 
 ```bash
-uv run pytest projects/templates/template_redacted_report/tests --cov=projects/templates/template_redacted_report/src --cov-fail-under=90
-uv run python scripts/pipeline/stage_01_test.py --project templates/template_redacted_report --project-only
-uv run python scripts/pipeline/stage_02_analysis.py --project templates/template_redacted_report
-uv run python scripts/pipeline/stage_04_validate.py --project templates/template_redacted_report
+uv run pytest tests --cov=src --cov-fail-under=90
+uv run python scripts/01_generate_release_artifacts.py
+uv run python scripts/02_build_figures.py
 ```
+
+Standalone repository: the render/validate stages and the `infrastructure`
+steganography tooling live in the [docxology/template](https://github.com/docxology/template)
+monorepo, not here.
 
 ## Contracts and boundaries
 
@@ -26,4 +29,4 @@ they may expose sanitized metadata and cryptographic hashes, never source spans,
 review rationales, or the in-memory narrative packet. The second script renders
 the deterministic exemplar figures via `src/redacted_report/figures.py`.
 
-Decision memory and verifier hardening follow [`docs/rules/memory_and_decision_records.md`](../../../docs/rules/memory_and_decision_records.md): use nearby `WHY:` comments only for surprising local choices, keep volatile numbers generated (not transcribed into prose), and pair every verifier-like gate (hash manifests, PDF proof verification, redaction ledgers) with a negative control — as the known-bad crafted-file cases in `tests/test_visuals_coverage.py` do.
+Decision memory and verifier hardening follow the monorepo's `docs/rules/memory_and_decision_records.md` (not shipped in this standalone repository): use nearby `WHY:` comments only for surprising local choices, keep volatile numbers generated (not transcribed into prose), and pair every verifier-like gate (hash manifests, PDF proof verification, redaction ledgers) with a negative control — as the known-bad crafted-file cases in `tests/test_visuals_coverage.py` do.

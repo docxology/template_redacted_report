@@ -2,7 +2,7 @@
 
 `template_redacted_report` is a public exemplar for redacted release reports, disclosure control, and source-protection review. It is designed for lawful, accountable release workflows in intelligence, security, legal, or public-records contexts without publishing sensitive operational content.
 
-Run via the template monorepo from the repository root with `uv run python scripts/pipeline/stage_01_test.py --project templates/template_redacted_report --project-only`, then generate the canonical audit artifacts with `uv run python scripts/pipeline/stage_02_analysis.py --project templates/template_redacted_report`. Copy `manuscript/config.yaml.example` to `manuscript/config.yaml` in forks and preserve template integrity.
+Run standalone from the repository root: `uv sync --extra dev`, then `uv run pytest tests --cov=src --cov-fail-under=90`. Generate the canonical audit artifacts with `uv run python scripts/01_generate_release_artifacts.py` and the deterministic figures with `uv run python scripts/02_build_figures.py`. Copy `manuscript/config.yaml.example` to `manuscript/config.yaml` in forks and preserve template integrity.
 
 ## When to use this template
 
@@ -42,7 +42,7 @@ Publishing surface — 20 platforms, 2 published:
 
 _Keywords: redaction, disclosure control, release audit, source protection._
 
-_Status legend: ✅ published (durable identifier recorded in `config.yaml`) · 🔵 reserved (identifier reserved but not yet registered by final publication) · ⚪ available (adapter implemented and locally verifiable) · 🟡 planned. This block is generated — edit `manuscript/config.yaml`, then regenerate with `uv run python -m infrastructure.publishing.status_report --project <path> --write`._
+_Status legend: ✅ published (durable identifier recorded in `config.yaml`) · 🔵 reserved (identifier reserved but not yet registered by final publication) · ⚪ available (adapter implemented and locally verifiable) · 🟡 planned. This block is generated — edit `manuscript/config.yaml`, then regenerate it from a [docxology/template](https://github.com/docxology/template) checkout with `uv run python -m infrastructure.publishing.status_report --project templates/template_redacted_report --write` (the generator lives in the monorepo, not in this standalone repository)._
 <!-- PUBLISHING-STATUS:END -->
 
 The canonical renderer is https://github.com/docxology/template with `--project templates/template_redacted_report`. Rendered reports are disposable; source-owned redaction ledgers and release-audit reports are the durable evidence.
@@ -76,17 +76,19 @@ normal Stage 02 order.
 Generate the full development proof matrix, including template steganography/provenance post-processing, with:
 
 ```bash
-uv run python projects/templates/template_redacted_report/scripts/generate_dev_variants.py
+uv run python scripts/generate_dev_variants.py
 ```
 
-Kmyth TPM sidecar sealing is optional and disabled by default. To request `.ski` sidecars for each steganography PDF and source-safe hash manifest, pass `--with-kmyth` or `--kmyth-binary-dir infrastructure/steganography/kmyth/bin`; add `--require-kmyth` when missing tools or failed sealing should block generation. When requested, `variant_matrix.json` records tool paths, runtime status, and sidecar counts.
+The default run applies the template steganography/provenance post-processor, which imports the `infrastructure` package from a [docxology/template](https://github.com/docxology/template) checkout; pass `--no-steganography` to write plain proof PDFs in a standalone clone. Kmyth TPM sealing likewise needs that checkout plus a local Kmyth build.
+
+Kmyth TPM sidecar sealing is optional and disabled by default. To request `.ski` sidecars for each steganography PDF and source-safe hash manifest, pass `--with-kmyth` or `--kmyth-binary-dir <path-to-kmyth-bin>`; add `--require-kmyth` when missing tools or failed sealing should block generation. When requested, `variant_matrix.json` records tool paths, runtime status, and sidecar counts.
 
 ## Tests
 
 Run:
 
 ```bash
-uv run pytest projects/templates/template_redacted_report/tests --cov=projects/templates/template_redacted_report/src --cov-fail-under=90
+uv run pytest tests --cov=src --cov-fail-under=90
 ```
 
 ## Outputs and validation
@@ -99,4 +101,4 @@ This exemplar is a release-safety and disclosure-control template. It must not b
 
 ## Fork guidance
 
-Use `scripts/audit/copy_exemplar.py` for clean forks. Keep high-side source files outside the public repository, commit only sanitized fixtures, configure your lawful marking taxonomy explicitly, require source-safe ledgers and review records, and require an explicit release authority field before publication.
+Fork by copying this repository, or use `scripts/audit/copy_exemplar.py` from a [docxology/template](https://github.com/docxology/template) checkout. Keep high-side source files outside the public repository, commit only sanitized fixtures, configure your lawful marking taxonomy explicitly, require source-safe ledgers and review records, and require an explicit release authority field before publication.

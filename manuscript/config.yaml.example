@@ -10,8 +10,8 @@ publication:
   doi: ""
   version_doi: ""
   version_record: ""
-  github_repository: ""
-  repository_url: "https://github.com/docxology/template/tree/main/projects/templates/template_redacted_report"
+  github_repository: "docxology/template_redacted_report"
+  repository_url: "https://github.com/docxology/template_redacted_report"
   license: "CC-BY-4.0"
 keywords:
   - redaction
@@ -36,7 +36,7 @@ render:
     dev_matrix_output: "output/dev/redaction_variants"
     kmyth_requested: true
     kmyth_required: false
-    kmyth_binary_dir: "infrastructure/steganography/kmyth/bin"
+    kmyth_binary_dir: "infrastructure/steganography/kmyth/bin"  # resolved inside a docxology/template checkout
     kmyth_seal_artifacts: ["hash_manifest", "pdf"]
     steganography_methods:
       - sha256_sha512_hash_manifest

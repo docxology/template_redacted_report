@@ -39,19 +39,24 @@ forks select their own policy for their own cleared fixtures.
 ## Verification workflow
 
 ```bash
-uv run pytest projects/templates/template_redacted_report/tests \
-  --cov=projects/templates/template_redacted_report/src --cov-fail-under=90
-uv run python scripts/pipeline/stage_02_analysis.py --project templates/template_redacted_report
-uv run python scripts/pipeline/stage_03_render.py --project templates/template_redacted_report
-uv run python scripts/pipeline/stage_04_validate.py --project templates/template_redacted_report
-uv run python scripts/audit/check_template_drift.py --project templates/template_redacted_report --strict
+uv run pytest tests --cov=src --cov-fail-under=90
+uv run python scripts/01_generate_release_artifacts.py
+uv run python scripts/02_build_figures.py
+uv run python scripts/verify_dev_variants.py --render-smoke
 ```
+
+The renderer, the Stage 03/04 render/validate stages, and the monorepo drift
+checker live in the [docxology/template](https://github.com/docxology/template)
+monorepo; this standalone repository ships the audit engine, the artifact
+writers, and the development visual-proof scripts.
 
 ## Boundary rules
 
 - Invented fixtures only; no restricted source material, targeting,
   collection, evasion, or surveillance operational guidance.
-- Never hand-edit `output/`; regenerate from source through Stages 02-05.
+- Never hand-edit `output/`; regenerate from source with
+  `scripts/01_generate_release_artifacts.py` and `scripts/02_build_figures.py`
+  (plus `scripts/generate_dev_variants.py` for the opt-in visual matrix).
 - The Kmyth TPM path (swtpm proxy, FlushContext patch) is optional and
   hardware-dependent; tracked dev evidence ships without `.ski` sidecars by
   `.gitignore` design.

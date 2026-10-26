@@ -6,6 +6,28 @@ Publication-pass enhancements: additional organization-specific release
 policies, deterministic exemplar figures, manuscript-to-audit binding tests,
 and documentation completion.
 
+### Fixed
+
+- Standalone-repository documentation: `README.md`, `AGENTS.md`,
+  `docs/README.md`, `scripts/README.md`, `TODO.md`, `STANDALONE.md`, and the
+  project skill now give commands that exist in this repository
+  (`uv run pytest tests --cov=src --cov-fail-under=90`,
+  `uv run python scripts/01_generate_release_artifacts.py`,
+  `uv run python scripts/02_build_figures.py`,
+  `uv run python scripts/generate_dev_variants.py`) instead of monorepo
+  pipeline invocations; monorepo-only pieces (renderer, Stage 03/04,
+  `copy_exemplar.py`, `infrastructure` steganography/Kmyth tooling,
+  `docs/rules/`, backlog history) are now named as such.
+- `scripts/generate_dev_variants.py` and `scripts/verify_dev_variants.py`:
+  dropped the leftover `REPO_ROOT = PROJECT_ROOT.parents[2]` entry on
+  `sys.path`, which targeted a monorepo-relative directory that does not
+  provide any importable package here.
+- `manuscript/config.yaml.example`: `publication.repository_url` points at the
+  standalone repository instead of a monorepo tree path, and the Kmyth binary
+  directory notes that it resolves inside a `docxology/template` checkout.
+- `TODO.md`: the `REDACTED-VISUAL-1` acceptance command no longer passes
+  `--timeout=120`, which required the undeclared `pytest-timeout` plugin.
+
 ### Added
 
 - Organization-specific release-review policies in `src/redacted_report/redaction.py`:
