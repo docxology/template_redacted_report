@@ -10,7 +10,7 @@ publication:
   doi: ""
   version_doi: ""
   version_record: ""
-  github_repository: "docxology/template_redacted_report"
+  github_repository: ""  # forks set their own slug
   repository_url: "https://github.com/docxology/template_redacted_report"
   license: "CC-BY-4.0"
 keywords:

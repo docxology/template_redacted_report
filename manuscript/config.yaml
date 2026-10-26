@@ -40,7 +40,7 @@ render:
     dev_matrix_output: "output/dev/redaction_variants"
     kmyth_requested: true
     kmyth_required: false
-    kmyth_binary_dir: "infrastructure/steganography/kmyth/bin"
+    kmyth_binary_dir: "infrastructure/steganography/kmyth/bin"  # resolved inside a docxology/template checkout
     kmyth_seal_artifacts: ["hash_manifest", "pdf"]
     steganography_methods:
       - sha256_sha512_hash_manifest
