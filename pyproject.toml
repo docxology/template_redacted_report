@@ -8,7 +8,7 @@ version = "0.1.0"
 license = {text = "CC-BY-4.0"}
 description = "Redacted release report and disclosure-control exemplar"
 authors = [{name = "Daniel Ari Friedman", email = "daniel@activeinference.institute"}]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 # visuals.py renders proof PDFs with reportlab and re-parses them with pypdf;
 # the isolated per-project interpreter needs both (mirrors template_pitch_deck).
 dependencies = [
