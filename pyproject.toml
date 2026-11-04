@@ -16,7 +16,8 @@ dependencies = [
     "reportlab>=4.0.0",
     "pypdf>=6.15.0",
     "matplotlib>=3.8.0",
-    "pillow>=12.3.0",
+    # 13.0.0 is the first Pillow release with no open advisory. Do not lower this floor.
+    "pillow>=13.0.0",
 ]
 
 [project.optional-dependencies]
