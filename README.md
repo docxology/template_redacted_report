@@ -2,6 +2,8 @@
 
 `template_redacted_report` is a public exemplar for redacted release reports, disclosure control, and source-protection review. It is designed for lawful, accountable release workflows in intelligence, security, legal, or public-records contexts without publishing sensitive operational content.
 
+![Disclosure-control and redaction workflow from source review and authority decisions through hash ledgers, residual-risk gates, and sanitized public release](output/figures/redaction_flow.png)
+
 Run standalone from the repository root: `uv sync --extra dev`, then `uv run pytest tests --cov=src --cov-fail-under=90`. Generate the canonical audit artifacts with `uv run python scripts/01_generate_release_artifacts.py` and the deterministic figures with `uv run python scripts/02_build_figures.py`. Copy `manuscript/config.yaml.example` to `manuscript/config.yaml` in forks and preserve template integrity.
 
 ## When to use this template
