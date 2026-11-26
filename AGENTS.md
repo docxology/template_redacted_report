@@ -2,7 +2,7 @@
 
 ## Ground truth
 
-Configuration lives in `manuscript/config.yaml`; invented public redaction fixtures live in `data/`; reusable release-audit logic lives in `src/redacted_report/`.
+Configuration lives in `docs/manuscript/config.yaml`; invented public redaction fixtures live in `data/`; reusable release-audit logic lives in `src/redacted_report/`.
 
 ## Commands
 
@@ -12,15 +12,15 @@ uv run python scripts/01_generate_release_artifacts.py
 uv run python scripts/02_build_figures.py
 ```
 
-Standalone repository: the render/validate stages and the `infrastructure`
-steganography tooling live in the [docxology/template](https://github.com/docxology/template)
-monorepo, not here.
+Use the [render guide](docs/rendering.md) to register the standalone checkout
+and invoke the template render/validate stages. See the
+[proof commands](docs/commands.md) for the optional template tooling.
 
 ## Contracts and boundaries
 
 Keep this exemplar limited to lawful redaction, declassification support, public-records release review, taxonomy normalization, source-safe ledgers, reviewer approval gates, sanitized packet export, and source-protection auditing. Do not add targeting, collection, evasion, or surveillance operational guidance. All committed examples must be invented fixtures.
 
-Stage 02 runs the scripts declared by `manuscript/config.yaml` →
+Stage 02 runs the scripts declared by `docs/manuscript/config.yaml` →
 `analysis.scripts`, in order: `scripts/01_generate_release_artifacts.py`, then
 `scripts/02_build_figures.py`. The first script delegates loading, policy
 application, source-safe projection, and canonical JSON writing to

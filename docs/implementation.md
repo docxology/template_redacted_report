@@ -1,6 +1,6 @@
-# redacted_report package
+# Release-audit implementation
 
-Audits redaction decisions, classification ceilings, source controls, taxonomy normalization, sanitized release packets, source-safe ledgers, segment hashes, reviewer gates, paragraph tables, and mosaic risk.
+The package in [`src/redacted_report/`](../src/redacted_report/) audits redaction decisions, classification ceilings, source controls, taxonomy normalization, sanitized release packets, source-safe ledgers, segment hashes, reviewer gates, paragraph tables, and mosaic risk.
 
 `artifacts.py` turns `data/example_segments.json` into typed domain records,
 builds the comprehensive packet in memory under the declared intelligence

@@ -169,7 +169,7 @@ class _ProofPDFRenderer:
             "Disclosure Control and Release Audit with TPM-Backed Sealed Sidecars",
         )
 
-        # Author / date — from manuscript/config.yaml (single source of truth)
+        # Author / date — from docs/manuscript/config.yaml (single source of truth)
         author, paper_date = publication_author_and_date()
         self.doc.setFont("Helvetica", 9)
         self.doc.drawCentredString(self.page_width / 2, self.page_height - 175, author)

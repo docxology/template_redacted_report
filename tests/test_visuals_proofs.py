@@ -200,7 +200,7 @@ def test_variant_generation_is_byte_deterministic(
 
 
 def test_config_declared_matrix_dimensions_match_implementation() -> None:
-    """manuscript/config.yaml declares the style/background lists; bind them.
+    """docs/manuscript/config.yaml declares the style/background lists; bind them.
 
     The config advertises the combinatoric space (render.redaction_visual);
     a style added or dropped in only one place would silently desynchronize
@@ -209,7 +209,7 @@ def test_config_declared_matrix_dimensions_match_implementation() -> None:
     import yaml
 
     config = yaml.safe_load(
-        (Path(__file__).resolve().parents[1] / "manuscript" / "config.yaml").read_text(encoding="utf-8")
+        (Path(__file__).resolve().parents[1] / "docs" / "manuscript" / "config.yaml").read_text(encoding="utf-8")
     )
     declared = config["render"]["redaction_visual"]
     assert tuple(declared["redaction_styles"]) == tuple(p.name for p in visuals.REDACTION_VISUAL_STYLES)
@@ -223,7 +223,7 @@ def test_title_page_author_comes_from_manuscript_config(
     import yaml
 
     config = yaml.safe_load(
-        (Path(__file__).resolve().parents[1] / "manuscript" / "config.yaml").read_text(encoding="utf-8")
+        (Path(__file__).resolve().parents[1] / "docs" / "manuscript" / "config.yaml").read_text(encoding="utf-8")
     )
     config_author = config["authors"][0]["name"]
     assert visuals.publication_author_and_date()[0] == config_author

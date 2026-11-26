@@ -77,9 +77,9 @@ The development proof matrix produces sixteen base PDFs (four redaction styles Ã
 - Hash manifest filename and SHA-256.
 - Kmyth sidecar count and filenames (when Kmyth is available).
 
-![Development proof matrix: four redaction styles (blackout, whiteout, grayout, blur) rendered across four PDF backgrounds (white, gray, black, blur); every one of the sixteen cells applies the identical source-safe redaction decisions.](../output/figures/disclosure_control_matrix.png){#fig:disclosure_control_matrix}
+![Development proof matrix: four redaction styles (blackout, whiteout, grayout, blur) rendered across four PDF backgrounds (white, gray, black, blur); every one of the sixteen cells applies the identical source-safe redaction decisions.](../../output/figures/disclosure_control_matrix.png){#fig:disclosure_control_matrix}
 
-[@fig:disclosure_control_matrix] renders the sixteen style-background combinations; only the visual token and the page background differ between cells.
+The matrix figure shows the sixteen style-background combinations; only the visual token and the page background differ between cells.
 
 ## Kmyth TPM Sidecar Production
 
@@ -90,7 +90,7 @@ When Kmyth tools are runnable and a TPM backend is available, each variant produ
 
 The `.ski` files are ASCII-armored and contain PCR selections, policy or-values, the storage key public area, and the sealed data object. Unsealing requires the same TPM and platform configuration.
 
-In the verified run, all sixteen variants produced both sidecars, yielding thirty-two `.ski` files total. The kmyth-seal binary's FlushContext patch ensured that consecutive seal invocations did not exhaust the swtpm transient object slots.
+A complete Kmyth-enabled run produces thirty-two `.ski` files. The verifier can require both sidecars for every variant. The tracked public proof matrix does not ship sidecars.
 
 ## Residual Risk Detection
 
@@ -123,5 +123,4 @@ The FlushContext patch to kmyth-seal is a critical fix for batch sealing workflo
 
 - The fixture data is invented; real release packets may require additional classification taxonomies and review-role policies.
 - The swtpm software TPM does not provide hardware-level tamper resistance; production deployments should use a hardware TPM.
-- The mssim proxy adds latency to each TPM command; batch sealing of thirty-two sidecars takes approximately thirty seconds.
 - PDF password encryption is optional and uses AES-256; the password is not stored in the variant matrix.

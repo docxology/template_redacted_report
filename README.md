@@ -4,7 +4,7 @@
 
 ![Disclosure-control and redaction workflow from source review and authority decisions through hash ledgers, residual-risk gates, and sanitized public release](output/figures/redaction_flow.png)
 
-Run standalone from the repository root: `uv sync --extra dev`, then `uv run pytest tests --cov=src --cov-fail-under=90`. Generate the canonical audit artifacts with `uv run python scripts/01_generate_release_artifacts.py` and the deterministic figures with `uv run python scripts/02_build_figures.py`. Copy `manuscript/config.yaml.example` to `manuscript/config.yaml` in forks and preserve template integrity.
+Start with the [documentation](docs/README.md) for setup, configuration, and verification. The [manuscript](docs/manuscript/README.md) contains the release-audit methods and fixture results.
 
 ## When to use this template
 
@@ -44,63 +44,7 @@ Publishing surface — 20 platforms, 2 published:
 
 _Keywords: redaction, disclosure control, release audit, source protection._
 
-_Status legend: ✅ published (durable identifier recorded in `config.yaml`) · 🔵 reserved (identifier reserved but not yet registered by final publication) · ⚪ available (adapter implemented and locally verifiable) · 🟡 planned. This block is generated — edit `manuscript/config.yaml`, then regenerate it from a [docxology/template](https://github.com/docxology/template) checkout with `uv run python -m infrastructure.publishing.status_report --project templates/template_redacted_report --write` (the generator lives in the monorepo, not in this standalone repository)._
+_Status legend: ✅ published (durable identifier recorded in `config.yaml`) · 🔵 reserved (identifier reserved but not yet registered by final publication) · ⚪ available (adapter implemented and locally verifiable) · 🟡 planned. This block is generated — edit `manuscript/config.yaml`, then regenerate with `uv run python -m infrastructure.publishing.status_report --project <path> --write`._
 <!-- PUBLISHING-STATUS:END -->
 
-The canonical renderer is https://github.com/docxology/template with `--project templates/template_redacted_report`. Rendered reports are disposable; source-owned redaction ledgers and release-audit reports are the durable evidence.
-
-## Configuration
-
-Primary configuration lives in `manuscript/config.yaml`; forkable defaults live in `manuscript/config.yaml.example`. Public example segments, redaction decisions, release-policy name, and invented review records live in `data/example_segments.json`; they contain invented fixture text only.
-
-`manuscript/config.yaml` declares two normal Stage 02 analysis scripts, run in
-order: `scripts/01_generate_release_artifacts.py`, then
-`scripts/02_build_figures.py`. The first loads the fixture through the
-typed `src/redacted_report/artifacts.py` contract, applies
-`intelligence_release_review` and `build_comprehensive_release_packet`, then
-writes two deterministic public projections:
-
-| Artifact | Public contents |
-| --- | --- |
-| `output/reports/redaction_audit.json` | Policy outcome, review gate, findings, aggregate metrics, and paragraph metadata; no narrative text |
-| `output/data/release_ledger.json` | Redaction bounds/reasons plus source/public SHA-256 values; no source spans |
-
-The full sanitized packet exists only in memory during analysis. The public
-projections deliberately omit segment text, reviewer rationales, and reviewer
-identities. The second Stage 02 script, `scripts/02_build_figures.py`, writes
-the deterministic exemplar figures and `figure_registry.json` to
-`output/figures/` via `src/redacted_report/figures.py`. Development PDF
-variants remain explicit opt-in proof artifacts and are not part of the
-normal Stage 02 order.
-
-`render.redaction_visual` declares the proofing surface: redaction styles `blackout`, `whiteout`, `grayout`, and `blur`; PDF backgrounds `white`, `gray`, `black`, and `blur`; and near-zero left/right PDF margins for the minimal report style. The blur background is a review mode that blurs non-redacted context while leaving redaction spans visibly treated by the selected style.
-
-Generate the full development proof matrix, including template steganography/provenance post-processing, with:
-
-```bash
-uv run python scripts/generate_dev_variants.py
-```
-
-The default run applies the template steganography/provenance post-processor, which imports the `infrastructure` package from a [docxology/template](https://github.com/docxology/template) checkout; pass `--no-steganography` to write plain proof PDFs in a standalone clone. Kmyth TPM sealing likewise needs that checkout plus a local Kmyth build.
-
-Kmyth TPM sidecar sealing is optional and disabled by default. To request `.ski` sidecars for each steganography PDF and source-safe hash manifest, pass `--with-kmyth` or `--kmyth-binary-dir <path-to-kmyth-bin>`; add `--require-kmyth` when missing tools or failed sealing should block generation. When requested, `variant_matrix.json` records tool paths, runtime status, and sidecar counts.
-
-## Tests
-
-Run:
-
-```bash
-uv run pytest tests --cov=src --cov-fail-under=90
-```
-
-## Outputs and validation
-
-The validator checks classification ceilings, source-control coverage, redaction bounds, residual sensitive markers, release authority, orphan redaction decisions, reviewer approvals, and mosaic-risk accumulation. It builds sanitized release packets in memory, paragraph-level audit tables, source-safe redaction ledgers, segment hash manifests, residual-risk reports, review-gate reports, and organization-specific classification taxonomy adapters, including an intelligence-style taxonomy for `TOP SECRET//SCI`-style markings in invented fixtures. A manuscript/audit binding receipt prevents source or audit drift. The optional pixel-regression gate is fail-closed: it reports `unavailable` when a pinned raster tool or baseline is absent rather than treating missing visual evidence as a pass. The Stage 02 writer projects those results into deterministic, text-free JSON evidence; Stage 04 validation checks the rendered public report once generated.
-
-## Publication and boundaries
-
-This exemplar is a release-safety and disclosure-control template. It must not be used to publish real classified material, operational targeting details, source identities, or surveillance methods. Replace fixtures with lawful, cleared, organization-approved content only.
-
-## Fork guidance
-
-Fork by copying this repository, or use `scripts/audit/copy_exemplar.py` from a [docxology/template](https://github.com/docxology/template) checkout. Keep high-side source files outside the public repository, commit only sanitized fixtures, configure your lawful marking taxonomy explicitly, require source-safe ledgers and review records, and require an explicit release authority field before publication.
+See the [render and validation guide](docs/rendering.md) for the pinned renderer and output locations. Follow the [standalone fork guide](docs/standalone.md#refresh-the-publishing-status-block) to refresh this block using the config under `docs/manuscript/`.
