@@ -1,4 +1,4 @@
-"""Publication byline sourced from ``manuscript/config.yaml``.
+"""Publication byline sourced from ``docs/manuscript/config.yaml``.
 
 The visual proof PDFs stamp authorship on every title page and into the
 steganography metadata; sourcing it here keeps a single source of truth
@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-_CONFIG_PATH = Path(__file__).resolve().parents[2] / "manuscript" / "config.yaml"
+_CONFIG_PATH = Path(__file__).resolve().parents[2] / "docs" / "manuscript" / "config.yaml"
 
 
 def publication_author_and_date() -> tuple[str, str]:

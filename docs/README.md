@@ -3,18 +3,29 @@
 Design decisions and verification notes for the `template_redacted_report`
 exemplar. The root contract is [`../AGENTS.md`](../AGENTS.md).
 
+## Start here
+
+- [Setup, rendering, and validation](rendering.md)
+- [Manuscript sources and configuration](manuscript/README.md)
+- [Analysis commands and development proof PDFs](commands.md)
+- [Public fixture contract](fixtures.md)
+- [Release-audit implementation](implementation.md)
+- [Native tests](tests.md)
+- [Standalone fork and publication guide](standalone.md)
+- [Maintenance backlog](backlog.md) and [changelog](changelog.md)
+
 ## Design decisions
 
 ### Text-free public projections
 
-`output/reports/redaction_audit.json` and `output/data/release_ledger.json`
-are the only source-owned public JSON writers (`src/redacted_report/artifacts.py`).
+`src/redacted_report/artifacts.py` writes `output/reports/redaction_audit.json`
+and `output/data/release_ledger.json`.
 The comprehensive sanitized packet exists in memory only. Public artifacts may
 carry sanitized metadata and SHA-256 digests, never source spans, review
 rationales, or reviewer identities. A canary test proves the source text never
 reaches the serialized bytes.
 
-### Volatile numbers are bound, not hand-maintained
+### Measured results and audit binding
 
 Measured values in the manuscript's results table are re-derived from a fresh
 canonical audit run by `tests/test_manuscript_binding.py`, which also fails
@@ -29,26 +40,22 @@ fixed `svg.hashsalt`, no randomness, fixed canvas/palette, and stripping the
 live `<dc:date>` SVG metadata line. `tests/test_figures.py` asserts the
 tracked `output/figures/` evidence equals a fresh build byte-for-byte.
 
+### Configuration
+
+Edit [`manuscript/config.yaml`](manuscript/config.yaml) for publication metadata,
+the analysis order, and the report settings. The
+[fork defaults](manuscript/config.yaml.example) omit the exemplar's DOI and
+GitHub slug. [`domain_profile.yaml`](../domain_profile.yaml) describes the
+domain and figure registry. [`experiment_plan.yaml`](../experiment_plan.yaml)
+describes the release-audit claims and evidence plan. The
+[fixture guide](fixtures.md) covers the data contract and policy name.
+
 ### Organization-specific policies
 
 `declared_release_policies()` exposes four invented adapters
 (intelligence, law-enforcement, public-records, health-privacy) over the same
 audit engine. The canonical pipeline stays on `intelligence_release_review`;
 forks select their own policy for their own cleared fixtures.
-
-## Verification workflow
-
-```bash
-uv run pytest tests --cov=src --cov-fail-under=90
-uv run python scripts/01_generate_release_artifacts.py
-uv run python scripts/02_build_figures.py
-uv run python scripts/verify_dev_variants.py --render-smoke
-```
-
-The renderer, the Stage 03/04 render/validate stages, and the monorepo drift
-checker live in the [docxology/template](https://github.com/docxology/template)
-monorepo; this standalone repository ships the audit engine, the artifact
-writers, and the development visual-proof scripts.
 
 ## Boundary rules
 

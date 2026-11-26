@@ -19,7 +19,7 @@ from redacted_report import (
 )
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-MANUSCRIPT_DIR = PROJECT_ROOT / "manuscript"
+MANUSCRIPT_DIR = PROJECT_ROOT / "docs" / "manuscript"
 RESULTS_MD = MANUSCRIPT_DIR / "02_results.md"
 METHODS_MD = MANUSCRIPT_DIR / "01_methods.md"
 EXAMPLE_INPUT = PROJECT_ROOT / "data" / "example_segments.json"
@@ -87,8 +87,10 @@ def test_manuscript_figure_references_resolve_to_registry_and_disk() -> None:
     assert set(registry) == {"fig:redaction_flow", "fig:disclosure_control_matrix"}
     for label in registry:
         assert label in combined_prose, f"manuscript never references {label}"
-        assert f"../output/figures/{registry[label]['filename']}" in combined_prose
-        assert (FIGURES_DIR / registry[label]["filename"]).is_file()
+        figure_ref = f"../../output/figures/{registry[label]['filename']}"
+        assert f"]({figure_ref})" in combined_prose
+        assert (MANUSCRIPT_DIR / figure_ref).resolve() == FIGURES_DIR / registry[label]["filename"]
+        assert (MANUSCRIPT_DIR / figure_ref).is_file()
 
 
 def test_stage_two_allowlist_matches_on_disk_scripts() -> None:

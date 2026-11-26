@@ -1,6 +1,12 @@
 # Changelog
 
-## Unreleased (2026-08-02)
+## Unreleased
+
+- Consolidated the guides under [`docs/`](README.md) and moved the report source
+  to [`docs/manuscript/`](manuscript/README.md). The
+  [render guide](rendering.md) records the pinned template commands.
+
+## 2026-08-02
 
 Publication-pass enhancements: additional organization-specific release
 policies, deterministic exemplar figures, manuscript-to-audit binding tests,
