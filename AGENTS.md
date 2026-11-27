@@ -6,6 +6,9 @@ Configuration lives in `docs/manuscript/config.yaml`; invented public redaction 
 
 ## Commands
 
+From a clean checkout, follow the [locked development setup](docs/tests.md)
+before using the coverage command. It requires the project's `dev` extra.
+
 ```bash
 uv run pytest tests --cov=src --cov-fail-under=90
 uv run python scripts/01_generate_release_artifacts.py
